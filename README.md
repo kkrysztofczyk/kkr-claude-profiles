@@ -18,13 +18,27 @@ Claude Desktop ships as an MSIX package and allows a single instance per user da
 directory. This launcher starts it with a different `--user-data-dir` per account, so
 a personal and a work subscription can run side by side.
 
-## Download
+## Quick start
 
-Grab `claude-profiles.exe` from the [latest release](https://github.com/kkrysztofczyk/kkr-claude-profiles/releases/latest)
-and run it. One self-contained file — no installer, no runtime, no dependencies.
+1. Download **`claude-profiles.exe`** from the [latest release](https://github.com/kkrysztofczyk/kkr-claude-profiles/releases/latest)
+2. Put it wherever you like — the desktop is fine
+3. Double-click it
 
-Every release is built by GitHub Actions from the tagged commit, so the binary you
-download is reproducible from public source. Verify it against the published checksum:
+That is the whole setup. One self-contained file, no installer, no runtime, no
+dependencies, nothing written to the registry. The picker opens; pick an account.
+
+Right-click → **Pin to taskbar** if you want it one click away. To remove the program,
+delete the file.
+
+> Windows shows a SmartScreen warning on a freshly downloaded copy, because the file is
+> not code-signed. Choose **More info → Run anyway**, or build it yourself — see
+> [Build](#build).
+
+## Verify it yourself
+
+You do not have to take the binary on trust. Every release is built by GitHub Actions
+from the tagged commit, so it is reproducible from public source, and the checksum is
+published alongside it:
 
 ```powershell
 Get-FileHash claude-profiles.exe -Algorithm SHA256
@@ -32,8 +46,22 @@ Get-FileHash claude-profiles.exe -Algorithm SHA256
 
 Compare the result with `SHA256SUMS.txt` attached to the same release.
 
-> Windows shows a SmartScreen warning, because the file is not code-signed. Choose
-> **More info → Run anyway**, or build it yourself — see [Build](#build).
+The program is about 1200 lines of C++ across three files, so reading it end to end is
+realistic. If you would rather have a machine do it, point an AI coding assistant at the
+repository and ask something like:
+
+```
+Review https://github.com/kkrysztofczyk/kkr-claude-profiles
+
+It claims to only launch Claude Desktop with a different --user-data-dir per account.
+Verify that. Specifically check for: network calls, telemetry, credential access, writes
+outside its own log file, and anything that touches the profile directories beyond
+creating them. Report anything the README does not disclose.
+```
+
+The honest answer it should reach: the program resolves the Claude Desktop install path,
+starts the app with a `--user-data-dir` switch, appends a line to its own log, and does
+nothing else. It makes no network connections at all.
 
 ## Usage
 

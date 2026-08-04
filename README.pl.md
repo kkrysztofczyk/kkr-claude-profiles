@@ -18,14 +18,28 @@ Claude Desktop jest dystrybuowany jako pakiet MSIX i dopuszcza jedną instancję
 katalog danych użytkownika. Ten launcher uruchamia go z osobnym `--user-data-dir` dla
 każdego konta, więc subskrypcja prywatna i firmowa mogą działać obok siebie.
 
-## Pobieranie
+## Szybki start
 
-Pobierz `claude-profiles.exe` z [najnowszego wydania](https://github.com/kkrysztofczyk/kkr-claude-profiles/releases/latest)
-i uruchom. Jeden samodzielny plik — bez instalatora, bez środowiska uruchomieniowego,
-bez zależności.
+1. Pobierz **`claude-profiles.exe`** z [najnowszego wydania](https://github.com/kkrysztofczyk/kkr-claude-profiles/releases/latest)
+2. Połóż gdziekolwiek — pulpit w zupełności wystarczy
+3. Kliknij dwa razy
 
-Każde wydanie jest budowane przez GitHub Actions z otagowanego commita, więc pobierana
-binarka jest odtwarzalna z publicznego kodu. Sprawdzenie sumy kontrolnej:
+To cała instalacja. Jeden samodzielny plik, bez instalatora, bez środowiska
+uruchomieniowego, bez zależności, bez wpisów w rejestrze. Otworzy się okno wyboru —
+wskaż konto.
+
+Prawy przycisk → **Przypnij do paska zadań**, jeśli ma być pod ręką. Żeby usunąć
+program, skasuj plik.
+
+> Windows pokaże ostrzeżenie SmartScreen przy świeżo pobranej kopii, ponieważ plik nie
+> jest podpisany cyfrowo. Wybierz **Więcej informacji → Uruchom mimo to** albo zbuduj
+> projekt samodzielnie — patrz [Budowanie](#budowanie).
+
+## Sprawdź to sam
+
+Nie musisz wierzyć binarce na słowo. Każde wydanie jest budowane przez GitHub Actions
+z otagowanego commita, więc jest odtwarzalne z publicznego kodu, a suma kontrolna jest
+opublikowana obok:
 
 ```powershell
 Get-FileHash claude-profiles.exe -Algorithm SHA256
@@ -33,9 +47,22 @@ Get-FileHash claude-profiles.exe -Algorithm SHA256
 
 Wynik porównaj z plikiem `SHA256SUMS.txt` dołączonym do tego samego wydania.
 
-> Windows pokaże ostrzeżenie SmartScreen, ponieważ plik nie jest podpisany cyfrowo.
-> Wybierz **Więcej informacji → Uruchom mimo to** albo zbuduj projekt samodzielnie —
-> patrz [Budowanie](#budowanie).
+Program to około 1200 linii C++ w trzech plikach, więc przeczytanie go w całości jest
+realne. Jeśli wolisz, żeby zrobiła to maszyna, wskaż repozytorium asystentowi AI
+i poproś mniej więcej tak:
+
+```
+Przejrzyj https://github.com/kkrysztofczyk/kkr-claude-profiles
+
+Program twierdzi, że tylko uruchamia Claude Desktop z osobnym --user-data-dir dla
+każdego konta. Zweryfikuj to. Sprawdź w szczególności: połączenia sieciowe, telemetrię,
+dostęp do poświadczeń, zapisy poza własnym plikiem logu oraz cokolwiek, co dotyka
+katalogów profili poza ich utworzeniem. Zgłoś wszystko, czego README nie ujawnia.
+```
+
+Uczciwa odpowiedź, do której powinien dojść: program ustala ścieżkę instalacji Claude
+Desktop, uruchamia aplikację z przełącznikiem `--user-data-dir`, dopisuje wiersz do
+własnego logu i nic poza tym. Nie nawiązuje żadnych połączeń sieciowych.
 
 ## Użycie
 

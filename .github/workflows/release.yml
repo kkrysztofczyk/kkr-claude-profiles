@@ -1,0 +1,69 @@
+name: Release
+
+# Wydanie powstaje z tagu: git tag v1.0.0 && git push origin v1.0.0
+# Binarka jest budowana tutaj, nie wgrywana z maszyny autora - dzieki temu
+# kazdy moze odtworzyc dokladnie ten sam plik z tego samego commita.
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag wydania (np. v1.0.0)'
+        required: true
+
+permissions:
+  contents: write   # potrzebne do utworzenia wydania
+
+jobs:
+  release:
+    name: Build and publish
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build
+        shell: cmd
+        run: build.cmd
+
+      - name: Collect release files
+        shell: pwsh
+        run: |
+          $exe = 'build\claude-profiles.exe'
+          if (-not (Test-Path $exe)) { throw "Brak $exe" }
+
+          New-Item -ItemType Directory -Path dist -Force | Out-Null
+          Copy-Item $exe dist\claude-profiles.exe
+
+          # Suma kontrolna pozwala sprawdzic pobrany plik: porownaj z wartoscia
+          # ponizej albo z logiem tego builda.
+          $hash = (Get-FileHash dist\claude-profiles.exe -Algorithm SHA256).Hash
+          "$hash  claude-profiles.exe" | Out-File dist\SHA256SUMS.txt -Encoding ascii
+          Write-Host "SHA256: $hash"
+
+      - name: Publish release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.event.inputs.tag || github.ref_name }}
+          files: |
+            dist/claude-profiles.exe
+            dist/SHA256SUMS.txt
+          generate_release_notes: true
+          fail_on_unmatched_files: true
+          body: |
+            Pobierz `claude-profiles.exe` i uruchom — to jeden samodzielny plik,
+            bez instalatora i bez zależności (statycznie linkowany CRT).
+
+            Windows pokaże ostrzeżenie SmartScreen, ponieważ plik nie jest podpisany
+            cyfrowo. Wybierz **Więcej informacji → Uruchom mimo to**, albo zbuduj
+            projekt samodzielnie przez `build.cmd`.
+
+            Sprawdzenie sumy kontrolnej:
+
+            ```powershell
+            Get-FileHash claude-profiles.exe -Algorithm SHA256
+            ```
+
+            Wynik porównaj z `SHA256SUMS.txt`.

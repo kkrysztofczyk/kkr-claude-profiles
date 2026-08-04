@@ -1,0 +1,33 @@
+#include <windows.h>
+
+// Ikona aplikacji - pierwszy zasob ICON jest tym, ktory Explorer pokazuje na pliku .exe.
+// Generowana przez tools\make-icon.ps1; nie edytowac recznie.
+1 ICON "launcher.ico"
+
+// Manifest: swiadomosc DPI i brak podnoszenia uprawnien.
+CREATEPROCESS_MANIFEST_RESOURCE_ID RT_MANIFEST "app.manifest"
+
+VS_VERSION_INFO VERSIONINFO
+FILEVERSION     1, 0, 0, 0
+PRODUCTVERSION  1, 0, 0, 0
+FILEOS          VOS_NT_WINDOWS32
+FILETYPE        VFT_APP
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "041504E4"          // polski, Multilingual
+        BEGIN
+            VALUE "CompanyName",     "KKr"
+            VALUE "FileDescription", "Uruchamia Claude Desktop na wielu profilach"
+            VALUE "FileVersion",     "1.0.0.0"
+            VALUE "InternalName",    "claude-profiles"
+            VALUE "OriginalFilename","claude-profiles.exe"
+            VALUE "ProductName",     "Profiles for Claude Desktop"
+            VALUE "ProductVersion",  "1.0.0.0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x0415, 1252
+    END
+END

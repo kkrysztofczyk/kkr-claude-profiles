@@ -1,0 +1,11 @@
+version: 2
+
+# Projekt nie ma zaleznosci w kodzie - jedyne, co sie starzeje, to wersje akcji
+# w workflowach. Dependabot pilnuje ich za nas.
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    commit-message:
+      prefix: ci

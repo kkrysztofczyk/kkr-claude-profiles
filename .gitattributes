@@ -1,0 +1,12 @@
+# Normalizacja koncow linii: w repozytorium zawsze LF, w katalogu roboczym to, co
+# natywne dla systemu. Bez tego git ostrzega przy kazdym dotknieciu plikow zrodlowych.
+* text=auto
+
+# Skrypty Windows musza miec CRLF - cmd.exe potrafi sie wywrocic na samym LF.
+*.cmd text eol=crlf
+*.bat text eol=crlf
+
+# Pliki binarne: bez konwersji koncow linii, inaczej ikona ulegnie uszkodzeniu.
+*.ico binary
+*.exe binary
+*.res binary

@@ -1,0 +1,51 @@
+name: CI
+
+# Kazdy push i PR musi sie skompilowac. Build uzywa /W4 /WX, wiec ostrzezenie
+# kompilatora zatrzymuje pipeline - to celowo jedyna bramka jakosci, jaka ten
+# projekt ma, i dlatego nie moze byc omijana.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+# Nowy push na te sama galaz anuluje poprzedni, wciaz trwajacy build.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build (x64)
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build
+        shell: cmd
+        run: build.cmd
+
+      - name: Verify output
+        shell: pwsh
+        run: |
+          $exe = 'build\claude-profiles.exe'
+          if (-not (Test-Path $exe)) { throw "Brak $exe" }
+          $info = Get-Item $exe
+          $version = $info.VersionInfo
+          Write-Host "Plik:    $($info.Name) ($([math]::Round($info.Length / 1KB)) KB)"
+          Write-Host "Produkt: $($version.ProductName) $($version.ProductVersion)"
+          Write-Host "SHA256:  $((Get-FileHash $exe -Algorithm SHA256).Hash)"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: claude-profiles-${{ github.sha }}
+          path: build/claude-profiles.exe
+          if-no-files-found: error
+          retention-days: 30

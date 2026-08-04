@@ -1,0 +1,12 @@
+build/
+*.obj
+*.res
+*.pdb
+*.ilk
+*.exe
+
+# Lokalna konfiguracja narzedzi - zawiera sciezki z tej maszyny, nie nalezy do repo.
+.claude/settings.local.json
+
+# Kopie zapasowe historii gita, gdyby ktos trzymal je obok projektu.
+*.bundle

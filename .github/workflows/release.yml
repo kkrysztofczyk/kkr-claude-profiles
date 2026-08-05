@@ -53,17 +53,53 @@ jobs:
           generate_release_notes: true
           fail_on_unmatched_files: true
           body: |
-            Pobierz `claude-profiles.exe` i uruchom — to jeden samodzielny plik,
-            bez instalatora i bez zależności (statycznie linkowany CRT).
+            Download **`claude-profiles.exe`** and run it. One self-contained file — no
+            installer, no runtime, no dependencies. Put it on your desktop and
+            double-click.
 
-            Windows pokaże ostrzeżenie SmartScreen, ponieważ plik nie jest podpisany
-            cyfrowo. Wybierz **Więcej informacji → Uruchom mimo to**, albo zbuduj
-            projekt samodzielnie przez `build.cmd`.
+            ### Windows will warn you — that is expected
 
-            Sprawdzenie sumy kontrolnej:
+            You will get a blue **"Windows protected your PC"** screen. Choose
+            **More info → Run anyway**. If the file seems blocked, right-click it →
+            **Properties** → tick **Unblock**.
+
+            This is not specific to this program: every unsigned executable downloaded
+            from the internet gets that warning. A signing certificate costs a few hundred
+            euros a year, and this is a free tool.
+
+            ### Not sure whether to trust it? Ask an AI
+
+            Don't take my word for it. Paste this into ChatGPT, Claude, Gemini, Copilot —
+            whichever you use:
+
+            ```
+            I want to install this Windows program. Read its source and tell me honestly
+            whether it is safe to run:
+
+            https://github.com/kkrysztofczyk/kkr-claude-profiles
+
+            Answer in plain language:
+            1. What does it actually do when I double-click it?
+            2. Does it send anything over the internet — telemetry, analytics, phoning home?
+            3. Can it read my passwords, tokens, conversations or files outside its own folder?
+            4. What does it write to my disk and where? Can I remove it completely?
+            5. Does the code match what the README claims, or is something undisclosed?
+            6. What are the real risks, and would you install it on your own machine?
+
+            Be blunt. If something looks suspicious, say so.
+            ```
+
+            The whole program is ~1200 lines of C++ in three files, so an assistant can
+            read all of it. For reference: it finds where Claude Desktop is installed,
+            starts it with a `--user-data-dir` switch, writes one line to its own log, and
+            does nothing else. No network code — it does not even link a networking
+            library.
+
+            ### Verify the download
 
             ```powershell
             Get-FileHash claude-profiles.exe -Algorithm SHA256
             ```
 
-            Wynik porównaj z `SHA256SUMS.txt`.
+            Compare with `SHA256SUMS.txt` below. This binary was built by GitHub Actions
+            from the tagged commit, not uploaded from anyone's machine.

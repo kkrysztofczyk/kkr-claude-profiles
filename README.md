@@ -30,9 +30,25 @@ dependencies, nothing written to the registry. The picker opens; pick an account
 Right-click → **Pin to taskbar** if you want it one click away. To remove the program,
 delete the file.
 
-> Windows shows a SmartScreen warning on a freshly downloaded copy, because the file is
-> not code-signed. Choose **More info → Run anyway**, or build it yourself — see
-> [Build](#build).
+## Windows will warn you — that is expected
+
+The first launch shows a blue full-screen dialog: **"Windows protected your PC"**, saying
+SmartScreen prevented an unrecognized app from starting. To run it anyway:
+
+**More info** → **Run anyway**
+
+You may also need to lift the download block: right-click the file → **Properties** →
+tick **Unblock** at the bottom of the General tab → **OK**.
+
+This happens because the binary is **not code-signed**. A signing certificate costs a few
+hundred euros a year, and even a signed app needs download volume before SmartScreen stops
+flagging it. Nothing about the warning is specific to this program — every unsigned
+executable downloaded from the internet gets it.
+
+If that is not good enough for you, do not click through it. Either [build the program
+yourself](#build) from source in one command, or read [Verify it
+yourself](#verify-it-yourself) first. Both are better answers than trusting a stranger's
+binary, and neither takes long.
 
 ## Verify it yourself
 
@@ -47,21 +63,38 @@ Get-FileHash claude-profiles.exe -Algorithm SHA256
 Compare the result with `SHA256SUMS.txt` attached to the same release.
 
 The program is about 1200 lines of C++ across three files, so reading it end to end is
-realistic. If you would rather have a machine do it, point an AI coding assistant at the
-repository and ask something like:
+realistic.
+
+**Or let an AI read it for you.** This works in any assistant — ChatGPT, Claude, Gemini,
+Copilot, whichever you already use. Copy the prompt below and paste it in:
 
 ```
-Review https://github.com/kkrysztofczyk/kkr-claude-profiles
+I want to install this Windows program. Read its source and tell me honestly whether
+it is safe to run:
 
-It claims to only launch Claude Desktop with a different --user-data-dir per account.
-Verify that. Specifically check for: network calls, telemetry, credential access, writes
-outside its own log file, and anything that touches the profile directories beyond
-creating them. Report anything the README does not disclose.
+https://github.com/kkrysztofczyk/kkr-claude-profiles
+
+Answer in plain language:
+1. What does it actually do when I double-click it?
+2. Does it send anything over the internet — telemetry, analytics, phoning home?
+3. Can it read my passwords, tokens, conversations or any files outside its own folder?
+4. What does it write to my disk and where? Can I remove it completely?
+5. Does the code match what the README claims, or is something undisclosed?
+6. What are the real risks, and would you install it on your own machine?
+
+Be blunt. If something looks suspicious, say so. If you cannot open the link, tell me
+and I will paste the source files instead.
 ```
 
-The honest answer it should reach: the program resolves the Claude Desktop install path,
-starts the app with a `--user-data-dir` switch, appends a line to its own log, and does
-nothing else. It makes no network connections at all.
+For the record, so you can check the answer you get against what this project claims: the
+program resolves where Claude Desktop is installed, starts it with a `--user-data-dir`
+switch, appends one line to its own log file, and does nothing else. It opens no network
+connections — it does not even link a networking library. It reads no credentials. It
+creates profile directories and never reads what Claude puts inside them.
+
+If an assistant tells you something that contradicts this, trust the assistant and
+[open an issue](https://github.com/kkrysztofczyk/kkr-claude-profiles/issues) — either the
+code or this README is wrong, and both are worth fixing.
 
 ## Usage
 

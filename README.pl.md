@@ -31,9 +31,26 @@ wskaż konto.
 Prawy przycisk → **Przypnij do paska zadań**, jeśli ma być pod ręką. Żeby usunąć
 program, skasuj plik.
 
-> Windows pokaże ostrzeżenie SmartScreen przy świeżo pobranej kopii, ponieważ plik nie
-> jest podpisany cyfrowo. Wybierz **Więcej informacji → Uruchom mimo to** albo zbuduj
-> projekt samodzielnie — patrz [Budowanie](#budowanie).
+## Windows będzie protestował — i tak ma być
+
+Przy pierwszym uruchomieniu zobaczysz niebieskie okno na cały ekran: **„System Windows
+ochronił Twój komputer"**, z informacją, że SmartScreen zablokował nierozpoznaną
+aplikację. Żeby mimo to uruchomić:
+
+**Więcej informacji** → **Uruchom mimo to**
+
+Może być też potrzebne zdjęcie blokady pobranego pliku: prawy przycisk na pliku →
+**Właściwości** → zaznacz **Odblokuj** na dole karty Ogólne → **OK**.
+
+Dzieje się tak, bo plik **nie jest podpisany cyfrowo**. Certyfikat do podpisywania kodu
+kosztuje kilkaset euro rocznie, a nawet podpisana aplikacja potrzebuje trochę pobrań,
+zanim SmartScreen przestanie ją oznaczać. W tym ostrzeżeniu nie ma nic szczególnego dla
+tego programu — dostaje je każdy niepodpisany plik wykonywalny pobrany z internetu.
+
+Jeśli Ci to nie wystarcza, nie klikaj przez to ostrzeżenie. Albo [zbuduj program
+samodzielnie](#budowanie) jednym poleceniem, albo najpierw przeczytaj [Sprawdź to
+sam](#sprawdź-to-sam). Oba wyjścia są lepsze niż zaufanie cudzej binarce i żadne nie
+zajmuje dużo czasu.
 
 ## Sprawdź to sam
 
@@ -48,21 +65,38 @@ Get-FileHash claude-profiles.exe -Algorithm SHA256
 Wynik porównaj z plikiem `SHA256SUMS.txt` dołączonym do tego samego wydania.
 
 Program to około 1200 linii C++ w trzech plikach, więc przeczytanie go w całości jest
-realne. Jeśli wolisz, żeby zrobiła to maszyna, wskaż repozytorium asystentowi AI
-i poproś mniej więcej tak:
+realne.
+
+**Albo niech przeczyta go za Ciebie AI.** Zadziała w dowolnym asystencie — ChatGPT,
+Claude, Gemini, Copilot, którykolwiek już masz. Skopiuj poniższy prompt i wklej:
 
 ```
-Przejrzyj https://github.com/kkrysztofczyk/kkr-claude-profiles
+Chcę zainstalować ten program na Windows. Przeczytaj jego kod źródłowy i powiedz mi
+uczciwie, czy można go bezpiecznie uruchomić:
 
-Program twierdzi, że tylko uruchamia Claude Desktop z osobnym --user-data-dir dla
-każdego konta. Zweryfikuj to. Sprawdź w szczególności: połączenia sieciowe, telemetrię,
-dostęp do poświadczeń, zapisy poza własnym plikiem logu oraz cokolwiek, co dotyka
-katalogów profili poza ich utworzeniem. Zgłoś wszystko, czego README nie ujawnia.
+https://github.com/kkrysztofczyk/kkr-claude-profiles
+
+Odpowiedz prostym językiem:
+1. Co ten program faktycznie robi, gdy kliknę go dwa razy?
+2. Czy wysyła cokolwiek przez internet — telemetria, analityka, łączenie z serwerem?
+3. Czy może czytać moje hasła, tokeny, rozmowy albo pliki poza własnym katalogiem?
+4. Co zapisuje na dysku i gdzie? Czy da się go usunąć w całości?
+5. Czy kod zgadza się z tym, co obiecuje README, czy coś jest przemilczane?
+6. Jakie są realne ryzyka i czy zainstalowałbyś go na własnym komputerze?
+
+Bądź bezpośredni. Jeśli coś wygląda podejrzanie, powiedz to wprost. Jeśli nie możesz
+otworzyć linku, napisz o tym, a wkleję Ci pliki źródłowe.
 ```
 
-Uczciwa odpowiedź, do której powinien dojść: program ustala ścieżkę instalacji Claude
-Desktop, uruchamia aplikację z przełącznikiem `--user-data-dir`, dopisuje wiersz do
-własnego logu i nic poza tym. Nie nawiązuje żadnych połączeń sieciowych.
+Dla porządku, żebyś miał do czego porównać otrzymaną odpowiedź: program ustala, gdzie
+zainstalowany jest Claude Desktop, uruchamia go z przełącznikiem `--user-data-dir`,
+dopisuje jeden wiersz do własnego logu i nic poza tym. Nie otwiera żadnych połączeń
+sieciowych — nie linkuje nawet biblioteki sieciowej. Nie czyta żadnych poświadczeń.
+Tworzy katalogi profili i nigdy nie zagląda w to, co Claude w nich zapisuje.
+
+Jeśli asystent powie Ci coś, co temu przeczy, zaufaj asystentowi i
+[zgłoś to jako issue](https://github.com/kkrysztofczyk/kkr-claude-profiles/issues) — coś
+jest wtedy nie tak albo z kodem, albo z tym README, i jedno i drugie warto naprawić.
 
 ## Użycie
 
